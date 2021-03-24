@@ -24,6 +24,8 @@ void main() {
       converter: converter,
       client: client,
     );
+    registerFallbackValue<DateTime>(DateTime(2000));
+    registerFallbackValue<Uri>(Uri());
   });
 
   final tDateTimeString = '2021-02-02';
@@ -39,9 +41,8 @@ void main() {
         'https://apod.nasa.gov/apod/image/2102/MeteorStreak_Kuszaj_1080.jpg',
   );
   void successMock() {
-    when(converter).calls(#format).thenReturn(tDateTimeString);
-    when(client)
-        .calls(#get)
+    when(() => converter.format(any())).thenReturn(tDateTimeString);
+    when(() => client.get(any()))
         .thenAnswer((_) async => http.Response(spaceMediaMock, 200));
   }
 
@@ -52,7 +53,7 @@ void main() {
     // Act
     await datasource.getSpaceMediaFromDate(tDateTime);
     // Assert
-    verify(converter).called(#format).withArgs(positional: [tDateTime]).once();
+    verify(() => converter.format(tDateTime)).called(1);
   });
 
   test('should call the get method with correct url', () async {
@@ -61,12 +62,10 @@ void main() {
     // Act
     await datasource.getSpaceMediaFromDate(tDateTime);
     // Assert
-    verify(client).called(#get).withArgs(positional: [
-      Uri.https('api.nasa.gov', '/planetary/apod', {
-        'api_key': 'DEMO_KEY',
-        'date': '2021-02-02',
-      })
-    ]).once();
+    verify(() => client.get(Uri.https('api.nasa.gov', '/planetary/apod', {
+          'api_key': 'DEMO_KEY',
+          'date': '2021-02-02',
+        }))).called(1);
   });
   test('should return a SpaceMediaModel when the call is successful', () async {
     // Arrange
@@ -75,16 +74,17 @@ void main() {
     final result = await datasource.getSpaceMediaFromDate(tDateTime);
     // Assert
     expect(result, tSpaceMediaModel);
+    verify(() => converter.format(tDateTime)).called(1);
   });
   test('should throw a ServerException when the call is unccessful', () async {
     // Arrange
-    when(converter).calls(#format).thenReturn(tDateTimeString);
-    when(client)
-        .calls(#get)
-        .thenAnswer((_) async => http.Response('Something went wrong', 404));
+    when(() => converter.format(any())).thenReturn(tDateTimeString);
+    when(() => client.get(any()))
+        .thenAnswer((_) async => http.Response('something went wrong', 400));
     // Act
     final result = datasource.getSpaceMediaFromDate(tDateTime);
     // Assert
     expect(() => result, throwsA(ServerException()));
+    verify(() => converter.format(tDateTime)).called(1);
   });
 }

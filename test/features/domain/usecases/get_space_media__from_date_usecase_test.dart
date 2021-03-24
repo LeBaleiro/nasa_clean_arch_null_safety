@@ -15,6 +15,7 @@ void main() {
   setUp(() {
     repository = MockSpaceMediaRepository();
     usecase = GetSpaceMediaFromDateUsecase(repository);
+    registerFallbackValue<DateTime>(DateTime(2000));
   });
 
   final tSpaceMedia = SpaceMediaEntity(
@@ -31,28 +32,23 @@ void main() {
   test('should get space media entity for a given date from the repository',
       () async {
     // Arrange
-    when(repository)
-        .calls(#getSpaceMediaFromDate)
+    when(() => repository.getSpaceMediaFromDate(any()))
         .thenAnswer((_) async => Right<Failure, SpaceMediaEntity>(tSpaceMedia));
     // Act
     final result = await usecase(tDate);
     // Assert
     expect(result, Right(tSpaceMedia));
-    verify(repository)
-        .called(#getSpaceMediaFromDate)
-        .withArgs(positional: [tDate]).once();
+    verify(() => repository.getSpaceMediaFromDate(tDate)).called(1);
   });
 
   test('should return a ServerFailure when don\'t succeed', () async {
     // Arrange
-    when(repository).calls(#getSpaceMediaFromDate).thenAnswer(
+    when(() => repository.getSpaceMediaFromDate(any())).thenAnswer(
         (_) async => Left<Failure, SpaceMediaEntity>(ServerFailure()));
     // Act
     final result = await usecase(tDate);
     // Assert
     expect(result, Left(ServerFailure()));
-    verify(repository)
-        .called(#getSpaceMediaFromDate)
-        .withArgs(positional: [tDate]).once();
+    verify(() => repository.getSpaceMediaFromDate(tDate)).called(1);
   });
 }

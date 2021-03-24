@@ -16,6 +16,7 @@ void main() {
   setUp(() {
     datasource = MockSpaceMediaDatasource();
     repository = SpaceMediaRepositoryImplementation(datasource);
+    registerFallbackValue<DateTime>(DateTime(2000));
   });
 
   final tSpaceMediaModel = SpaceMediaModel(
@@ -31,29 +32,25 @@ void main() {
 
   test('should return space media model when calls the datasource', () async {
     // Arrange
-    when(datasource)
-        .calls(#getSpaceMediaFromDate)
+    when(() => datasource.getSpaceMediaFromDate(any()))
         .thenAnswer((_) async => tSpaceMediaModel);
     // Act
     final result = await repository.getSpaceMediaFromDate(tDate);
     // Assert
     expect(result, Right(tSpaceMediaModel));
-    verify(datasource)
-        .called(#getSpaceMediaFromDate)
-        .withArgs(positional: [tDate]).once();
+    verify(() => datasource.getSpaceMediaFromDate(tDate)).called(1);
   });
 
   test(
       'should return a server failure when the call to datasource is unsucessful',
       () async {
     // Arrange
-    when(datasource).calls(#getSpaceMediaFromDate).thenThrow(ServerException());
+    when(() => datasource.getSpaceMediaFromDate(any()))
+        .thenThrow(ServerException());
     // Act
     final result = await repository.getSpaceMediaFromDate(tDate);
     // Assert
     expect(result, Left(ServerFailure()));
-    verify(datasource)
-        .called(#getSpaceMediaFromDate)
-        .withArgs(positional: [tDate]).once();
+    verify(() => datasource.getSpaceMediaFromDate(tDate)).called(1);
   });
 }
