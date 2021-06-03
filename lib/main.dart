@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-
-import 'app_module.dart';
-import 'app_widget.dart';
+import 'package:nasa_clean_arch/app_module.dart';
+import 'package:nasa_clean_arch/app_widget.dart';
 
 void main() {
-  runApp(ModularApp(
-    module: AppModule(),
-    child: AppWidget(),
-  ));
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ModularApp(
+      module: AppModule(),
+      child: AppWidget(),
+    );
+  }
 }
