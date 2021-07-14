@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nasa_clean_arch_null_safety">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
    <application
         android:label="nasa_clean_arch_null_safety"
         android:icon="@mipmap/ic_launcher">
