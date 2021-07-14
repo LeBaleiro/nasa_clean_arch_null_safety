@@ -12,17 +12,17 @@ import 'features/presenter/pages/picture_page.dart';
 class AppModule extends Module {
   @override
   final List<Bind> binds = [
-    Bind((i) => HomeStore(i())),
-    Bind((i) => GetSpaceMediaFromDateUsecase(i())),
-    Bind((i) => SpaceMediaRepositoryImplementation(i())),
-    Bind((i) => SpaceMediaDatasouceImplementation(converter: i(), client: i())),
-    Bind((i) => http.Client()),
-    Bind((i) => DateInputConverter()),
+    Bind.factory((i) => HomeStore(i())),
+    Bind.lazySingleton((i) => GetSpaceMediaFromDateUsecase(i())),
+    Bind.lazySingleton((i) => SpaceMediaRepositoryImplementation(i())),
+    Bind.lazySingleton((i) => SpaceMediaDatasouceImplementation(converter: i(), client: i())),
+    Bind.lazySingleton((i) => http.Client()),
+    Bind.lazySingleton((i) => DateInputConverter()),
   ];
 
   @override
   final List<ModularRoute> routes = [
     ChildRoute('/', child: (_, __) => HomePage()),
-    ChildRoute('/picture', child: (_, __) => PicturePage()),
+    ChildRoute('/picture', child: (_, args) => PicturePage.fromArgs(args.data)),
   ];
 }

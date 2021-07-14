@@ -29,9 +29,10 @@ dependencies:
   equatable: ^2.0.0-nullsafety.4
   http: ^0.13.0
   dartz: ^0.10.0-nullsafety.1
-  video_player: ^2.0.0
+  youtube_player_iframe: ^2.1.0
   shimmer: ^2.0.0-nullsafety.0
-  flutter_triple: ^1.0.6
+  flutter_triple: ^1.2.2
+  url_launcher: ^6.0.7
 
 dev_dependencies:
   flutter_test:
